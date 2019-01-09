@@ -6,6 +6,7 @@ import com.wangzl.common.model.bean.homebean.IndexBean;
 import com.wangzl.common.network.cookie.CookiesManager;
 import com.wangzl.common.network.interceptor.BasicParamsInterceptor;
 import com.wangzl.common.network.interceptor.LoggerInterceptor;
+import com.wangzl.common.network.interceptor.NoNetInterceptor;
 import com.wangzl.common.network.toolbox.BigTreeCall;
 import com.wangzl.common.network.toolbox.BigTreeCallAdapterFactory;
 import com.wangzl.common.network.toolbox.BigTreeCallback;
@@ -61,13 +62,15 @@ public class NetworkManager {
         return singleton;
     }
 
+    /**
+     * 添加公共参数的拦截器
+     *
+     * @return
+     */
     public static BasicParamsInterceptor addParamsInterceptor() {
         BasicParamsInterceptor basicParamsInterceptor = new BasicParamsInterceptor.Builder()
                 .addParam("key", "9edd8a27f78be6235f319be7cfd68c41")
                 .build();
-
-        Log.e(TAG,"添加公共参数key====");
-
         return basicParamsInterceptor;
     }
 
@@ -77,8 +80,9 @@ public class NetworkManager {
         builder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-        builder.addInterceptor(addParamsInterceptor());
         builder.addInterceptor(new LoggerInterceptor());
+        builder.addInterceptor(new NoNetInterceptor());
+        builder.addInterceptor(addParamsInterceptor());
         getBaseUrl(builder);
     }
 

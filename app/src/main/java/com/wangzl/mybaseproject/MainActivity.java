@@ -24,7 +24,6 @@ public class MainActivity extends BaseActivity {
 
     private void initData() {
         String type = "top";
-        String key = "9edd8a27f78be6235f319be7cfd68c41";
 
         NetworkManager.getSingleton().fetchIndex(type, new BigTreeCallback<IndexBean>() {
             @Override
