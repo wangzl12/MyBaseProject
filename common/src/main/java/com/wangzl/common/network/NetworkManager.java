@@ -1,5 +1,7 @@
 package com.wangzl.common.network;
 
+import android.util.Log;
+
 import com.wangzl.common.model.bean.homebean.IndexBean;
 import com.wangzl.common.network.toolbox.BigTreeCall;
 import com.wangzl.common.network.toolbox.BigTreeCallAdapterFactory;
@@ -19,6 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @Description 网络管理类，管理所有网络请求的方法
  */
 public class NetworkManager {
+
+    public static String TAG = "NetworkManager";
     public static final String BASE_URL = "http://v.juhe.cn/toutiao/";//主Api路径
 
     private static final long CONNECTION_TIMEOUT = 5 * 60 * 1000l;
@@ -54,12 +58,24 @@ public class NetworkManager {
         return singleton;
     }
 
+    public static BasicParamsInterceptor addParamsInterceptor() {
+        BasicParamsInterceptor basicParamsInterceptor = new BasicParamsInterceptor.Builder()
+                .addParam("key", "9edd8a27f78be6235f319be7cfd68c41")
+                .build();
+
+        Log.e(TAG,"添加公共参数key====");
+
+        return basicParamsInterceptor;
+    }
+
     private void initInternal() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(new CookiesManager());
         builder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
+        builder.addInterceptor(addParamsInterceptor());
+        builder.addInterceptor(new LoggerInterceptor());
         getBaseUrl(builder);
     }
 
@@ -76,10 +92,10 @@ public class NetworkManager {
     //用于业务层调用的方法统一在这里添加
 
 
-    //1.登录
-    public BigTreeCall fetchIndex(String type, String key, BigTreeCallback<IndexBean> callback) {
+    //1.获取首页数据
+    public BigTreeCall fetchIndex(String type, BigTreeCallback<IndexBean> callback) {
         Api.IndexApi api = (Api.IndexApi) getApi(Api.IndexApi.class);
-        BigTreeCall<IndexBean> call = api.getIndex(type, key);
+        BigTreeCall<IndexBean> call = api.getIndex(type);
         call.enqueue(callback);
         return call;
     }

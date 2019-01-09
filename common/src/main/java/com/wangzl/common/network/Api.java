@@ -18,8 +18,7 @@ public class Api {
     public interface IndexApi {
         @FormUrlEncoded
         @POST(ApiUrl.API_INDEX)
-        BigTreeCall<IndexBean> getIndex(@Field("type") String type,
-                                        @Field("key") String key);
+        BigTreeCall<IndexBean> getIndex(@Field("type") String type);
     }
 
 }
