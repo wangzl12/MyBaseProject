@@ -1,4 +1,4 @@
-package com.wangzl.common.network;
+package com.wangzl.common.network.cookie;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
