@@ -12,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.wangzl.common.model.bean.homebean.IndexBean;
 import com.wangzl.common.network.NetworkManager;
 import com.wangzl.common.network.toolbox.BigTreeCallback;
+import com.wangzl.common.utils.ToastUtil;
 import com.wangzl.mybaseproject.R;
 import com.wangzl.mybaseproject.base.BaseFragment;
 import com.wangzl.mybaseproject.home.NewsDetailActivity;
@@ -59,13 +61,17 @@ public class InfomationListFragment extends BaseFragment {
     }
 
     private void initData() {
-        Log.e(TAG,"========="+type);
+        Log.e(TAG, "=========" + type);
         NetworkManager.getSingleton().fetchIndex(type, new BigTreeCallback<IndexBean>() {
             @Override
             public void onSuccess(Response<IndexBean> response) {
                 IndexBean indexBean = response.body();
-                List<IndexBean.ResultBean.DataBean> newsList =  indexBean.getResult().getData();
-                showNewsList(newsList);
+                if (null != indexBean && null != indexBean.getResult()) {
+                    List<IndexBean.ResultBean.DataBean> newsList = indexBean.getResult().getData();
+                    showNewsList(newsList);
+                }else{
+                    ToastUtil.showMsg(indexBean.getReason());
+                }
             }
 
             @Override
@@ -76,7 +82,7 @@ public class InfomationListFragment extends BaseFragment {
     }
 
     private void showNewsList(final List<IndexBean.ResultBean.DataBean> newsList) {
-        mEasyAdapter = new EasyRVAdapter(getActivity(),newsList,R.layout.news_list_item) {
+        mEasyAdapter = new EasyRVAdapter(getActivity(), newsList, R.layout.news_list_item) {
             @Override
             protected void onBindData(EasyRVHolder viewHolder, int position, Object item) {
                 IndexBean.ResultBean.DataBean bean = (IndexBean.ResultBean.DataBean) item;
@@ -91,7 +97,7 @@ public class InfomationListFragment extends BaseFragment {
         mEasyAdapter.setOnItemClickListener(new EasyRVAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, Object item) {
-                NewsDetailActivity.startActivity(getActivity(),newsList.get(position).getUrl());
+                NewsDetailActivity.startActivity(getActivity(), newsList.get(position).getUrl());
 
             }
         });
